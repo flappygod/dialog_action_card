@@ -24,20 +24,19 @@ typedef CreateRectTween = Tween<Rect?> Function(Rect? begin, Rect? end);
 ///
 ///  * [TransitionBuilder], which is similar but only takes a [BuildContext]
 ///    and a child widget.
-typedef HeroPlaceholderBuilder =
-    Widget Function(BuildContext context, Size heroSize, Widget child);
+typedef HeroPlaceholderBuilder = Widget Function(
+    BuildContext context, Size heroSize, Widget child);
 
 /// A function that lets [DialogActionBaseHero]es self supply a [Widget] that is shown during the
 /// hero's flight from one route to another instead of default (which is to
 /// show the destination route's instance of the DialogActionBaseHero).
-typedef HeroFlightShuttleBuilder =
-    Widget Function(
-      BuildContext flightContext,
-      Animation<double> animation,
-      DialogActionHeroFlightDirection flightDirection,
-      BuildContext fromHeroContext,
-      BuildContext toHeroContext,
-    );
+typedef HeroFlightShuttleBuilder = Widget Function(
+  BuildContext flightContext,
+  Animation<double> animation,
+  DialogActionHeroFlightDirection flightDirection,
+  BuildContext fromHeroContext,
+  BuildContext toHeroContext,
+);
 
 typedef _OnFlightEnded = void Function(_HeroFlight flight);
 
@@ -684,13 +683,12 @@ class _HeroFlight {
     // Try to find the new origin of the toHero, if the flight isn't aborted.
     final Offset? toHeroOrigin =
         toHeroBox != null && toHeroBox.attached && toHeroBox.hasSize
-        ? toHeroBox.localToGlobal(
-            Offset.zero,
-            ancestor:
-                manifest.toRoute.subtreeContext?.findRenderObject()
+            ? toHeroBox.localToGlobal(
+                Offset.zero,
+                ancestor: manifest.toRoute.subtreeContext?.findRenderObject()
                     as RenderBox?,
-          )
-        : null;
+              )
+            : null;
 
     if (toHeroOrigin != null && toHeroOrigin.isFinite) {
       // If the new origin of toHero is available and also paintable, try to
@@ -926,9 +924,8 @@ class DialogActionHeroController extends NavigatorObserver {
           flight._proxyAnimation.isDismissed;
     }
 
-    final List<_HeroFlight> invalidFlights = _flights.values
-        .where(isInvalidFlight)
-        .toList(growable: false);
+    final List<_HeroFlight> invalidFlights =
+        _flights.values.where(isInvalidFlight).toList(growable: false);
 
     // Treat these invalidated flights as dismissed. Calling _handleAnimationUpdate
     // will also remove the flight from _flights.
@@ -986,8 +983,7 @@ class DialogActionHeroController extends NavigatorObserver {
     // adding routes to the pages stack causing the route to never get laid out.
     final RenderBox? fromRouteRenderBox =
         toRoute.subtreeContext?.findRenderObject() as RenderBox?;
-    final bool hasValidSize =
-        (fromRouteRenderBox?.hasSize ?? false) &&
+    final bool hasValidSize = (fromRouteRenderBox?.hasSize ?? false) &&
         fromRouteRenderBox!.size.isFinite;
     if (isUserGestureTransition &&
         flightType == DialogActionHeroFlightDirection.pop &&
@@ -1043,8 +1039,8 @@ class DialogActionHeroController extends NavigatorObserver {
       return;
     }
 
-    final RenderObject? navigatorRenderObject = navigator.context
-        .findRenderObject();
+    final RenderObject? navigatorRenderObject =
+        navigator.context.findRenderObject();
 
     if (navigatorRenderObject is! RenderBox) {
       assert(
@@ -1093,8 +1089,7 @@ class DialogActionHeroController extends NavigatorObserver {
               fromHero: fromHero,
               toHero: toHero,
               createRectTween: createRectTween,
-              shuttleBuilder:
-                  toHero.widget.flightShuttleBuilder ??
+              shuttleBuilder: toHero.widget.flightShuttleBuilder ??
                   fromHero.widget.flightShuttleBuilder ??
                   _defaultHeroFlightShuttleBuilder,
               isUserGestureTransition: isUserGestureTransition,

@@ -62,11 +62,11 @@ class DialogActionDragView extends StatefulWidget {
     this.snapDuration = iosDefaultDuration,
     this.snapCurve = iosDefaultCurve,
   }) : assert(
-         cardRatio >= 0.01 &&
-             cardRatio < 0.99 &&
-             funcRatioMax >= 0.01 &&
-             funcRatioMax < 0.99,
-       );
+          cardRatio >= 0.01 &&
+              cardRatio < 0.99 &&
+              funcRatioMax >= 0.01 &&
+              funcRatioMax < 0.99,
+        );
 
   @override
   State<DialogActionDragView> createState() {
@@ -223,8 +223,7 @@ class _DialogActionDragViewState extends State<DialogActionDragView>
     if (_currentHeroAnimation?.status == AnimationStatus.reverse) {
       return;
     }
-    double overScroll =
-        (_funcInitialActualRect!.height + scrollPixels * 2) /
+    double overScroll = (_funcInitialActualRect!.height + scrollPixels * 2) /
         _funcInitialActualRect!.height;
     _funcScale = overScroll.clamp(0, 1);
   }
@@ -294,9 +293,9 @@ class _DialogActionDragViewState extends State<DialogActionDragView>
 
     final double ratio =
         (_cardHorizontalOffset.abs() / _kCardHorizontalMaxOffset).clamp(
-          0.0,
-          1.0,
-        );
+      0.0,
+      1.0,
+    );
 
     final double damping = _kCardHorizontalBaseDamping * (1.0 - ratio * 0.6);
 
@@ -321,11 +320,11 @@ class _DialogActionDragViewState extends State<DialogActionDragView>
     }
     _cardHorizontalReboundAnimation =
         Tween<double>(begin: _cardHorizontalOffset, end: 0).animate(
-          CurvedAnimation(
-            parent: _cardHorizontalReboundController,
-            curve: Curves.easeOutCubic,
-          ),
-        );
+      CurvedAnimation(
+        parent: _cardHorizontalReboundController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
     _cardHorizontalReboundController
       ..reset()
       ..forward();

@@ -560,8 +560,8 @@ Widget dragActionHeroFlightShuttleBuilder(
   final EdgeInsets toHeroPadding = toMediaQueryData.padding;
   final EdgeInsetsTween paddingTween =
       (flightDirection == DialogActionHeroFlightDirection.push)
-      ? EdgeInsetsTween(begin: fromHeroPadding, end: toHeroPadding)
-      : EdgeInsetsTween(begin: toHeroPadding, end: fromHeroPadding);
+          ? EdgeInsetsTween(begin: fromHeroPadding, end: toHeroPadding)
+          : EdgeInsetsTween(begin: toHeroPadding, end: fromHeroPadding);
   return AnimatedBuilder(
     animation: animation,
     builder: (BuildContext context, Widget? child) {

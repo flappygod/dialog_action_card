@@ -152,11 +152,11 @@ class DialogActionCardView extends StatefulWidget {
     this.swipeDownToClose = true,
     this.tapToClose = true,
   }) : assert(
-         cardRatio >= 0.01 &&
-             cardRatio < 0.99 &&
-             funcRatioMax >= 0.01 &&
-             funcRatioMax < 0.99,
-       );
+          cardRatio >= 0.01 &&
+              cardRatio < 0.99 &&
+              funcRatioMax >= 0.01 &&
+              funcRatioMax < 0.99,
+        );
 
   @override
   State<StatefulWidget> createState() {
