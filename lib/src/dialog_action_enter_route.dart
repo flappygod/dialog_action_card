@@ -1,4 +1,4 @@
-import 'package:dialog_action_card/src/dialog_action_base.dart';
+import 'dialog_action_base.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -25,6 +25,20 @@ class DialogActionEnterRoute<T> extends PageRoute<T>
     super.fullscreenDialog = true,
     this.duration = iosDefaultDuration,
   });
+
+  @override
+  void didChangeNext(Route<dynamic>? nextRoute) {
+    super.didChangeNext(nextRoute);
+    //ignore: invalid_use_of_visible_for_testing_member
+    receivedTransition = null;
+  }
+
+  @override
+  void didPopNext(Route<dynamic> nextRoute) {
+    super.didPopNext(nextRoute);
+    //ignore: invalid_use_of_visible_for_testing_member
+    receivedTransition = null;
+  }
 
   @override
   Widget buildTransitions(

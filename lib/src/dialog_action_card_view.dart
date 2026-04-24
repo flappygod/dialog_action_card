@@ -1,20 +1,20 @@
-import 'package:flutter/material.dart';
-import 'dialog_action_base.dart';
-import 'dialog_action_drag_view.dart';
 import 'dialog_action_enter_route.dart';
+import 'package:flutter/material.dart';
+import 'dialog_action_drag_view.dart';
+import 'dialog_action_base.dart';
 import 'dart:ui';
 
 ///展示dialog action
 Future showDialogAction({
   required BuildContext context,
   required WidgetBuilder builder,
+  Duration? duration,
 }) {
-  return Navigator.of(context).push(
-    DialogActionEnterRoute(
-      translucentColor: Colors.transparent,
-      builder: builder,
-    ),
-  );
+  return Navigator.of(context).push(DialogActionEnterRoute(
+    translucentColor: Colors.transparent,
+    duration: duration ?? iosDefaultDuration,
+    builder: builder,
+  ));
 }
 
 ///磨砂玻璃覆盖层view
@@ -239,6 +239,12 @@ class _DialogActionCardViewState extends State<DialogActionCardView> {
       behavior: HitTestBehavior.translucent,
       onTap: () {
         if (widget.tapToClose) {
+          ///当前route正在进入动画中，不能pop
+          final ModalRoute<dynamic>? route = ModalRoute.of(context);
+          final AnimationStatus? status = route?.animation?.status;
+          if (status == AnimationStatus.forward) {
+            return;
+          }
           if (Navigator.of(context).canPop()) {
             Navigator.of(context).pop();
           }

@@ -1,13 +1,11 @@
-import 'package:dialog_action_card/dialog_action_card.dart';
 import 'package:flutter/cupertino.dart';
+import 'dialog_action_base.dart';
 
-///A transparent route that disables push animation
-///but keeps the pop animation.
+/// A Cupertino route that blocks pop and back-swipe
+/// until its initial push animation completes.
 ///
-///一个透明路由：
-///- 去掉进入动画
-///- 保留返回动画
-///- push 未完成前禁止返回
+/// 一个基于 CupertinoPageRoute 的路由：
+/// 在首次 push 动画完成前，禁止 pop 与侧滑返回。
 class DialogActionLeaveRoute<T> extends CupertinoPageRoute<T> {
   DialogActionLeaveRoute({
     required super.builder,
@@ -21,95 +19,83 @@ class DialogActionLeaveRoute<T> extends CupertinoPageRoute<T> {
     super.title,
   });
 
-  ///duration
+  /// Transition duration for push and pop.
   final Duration duration;
 
-  ///判断当前的push是否在进行中
-  bool _isPushing() {
-    final Animation<double>? animation = this.animation;
-    if (animation == null) {
+  /// Whether the initial push animation has completed.
+  bool _didCompleteInitialPush = false;
+
+  /// Whether the animation status listener has been attached.
+  bool _didAttachAnimationListener = false;
+
+  /// Attaches the animation status listener when animation becomes available.
+  void _maybeAttachAnimationListener() {
+    if (_didAttachAnimationListener) {
+      return;
+    }
+    final Animation<double>? routeAnimation = animation;
+    if (routeAnimation == null) {
+      return;
+    }
+    _didAttachAnimationListener = true;
+    routeAnimation.addStatusListener(_handleAnimationStatusChanged);
+  }
+
+  /// Marks the initial push as completed once the route animation completes.
+  void _handleAnimationStatusChanged(AnimationStatus status) {
+    if (status == AnimationStatus.completed) {
+      _didCompleteInitialPush = true;
+    }
+  }
+
+  /// Whether this route is still in its initial push progress.
+  bool _isOwnInitialPushInProgress() {
+    final Animation<double>? routeAnimation = animation;
+    if (routeAnimation == null) {
       return false;
     }
-    return animation.status == AnimationStatus.forward && animation.value < 1.0;
-  }
-
-  ///判断是否是push
-  bool _isPush(Animation<double> animation) {
-    return animation.status != AnimationStatus.reverse;
-  }
-
-  //当下一个页面 push 上来时，不让当前页面执行默认的左移退出动画
-  bool _isBeingCovered(Animation<double> secondaryAnimation) {
-    return secondaryAnimation.status == AnimationStatus.forward ||
-        (secondaryAnimation.status == AnimationStatus.completed &&
-            secondaryAnimation.value > 0.0);
+    return !_didCompleteInitialPush &&
+        routeAnimation.status == AnimationStatus.forward &&
+        routeAnimation.value > 0.0 &&
+        routeAnimation.value < 1.0;
   }
 
   @override
   bool get popGestureEnabled {
-    if (_isPushing()) {
+    _maybeAttachAnimationListener();
+    if (_isOwnInitialPushInProgress()) {
       return false;
     }
     return super.popGestureEnabled;
   }
 
+  /// Prevent pop while the initial push is not finished.
+  /// 在首次 push 未完成前，阻止 pop。
   @override
   RoutePopDisposition get popDisposition {
-    if (_isPushing()) {
+    _maybeAttachAnimationListener();
+    if (_isOwnInitialPushInProgress()) {
       return RoutePopDisposition.doNotPop;
     }
     return super.popDisposition;
   }
 
   @override
-  DelegatedTransitionBuilder? get delegatedTransition {
-    return (
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      bool allowSnapshotting,
-      Widget? child,
-    ) {
-      //当下一个页面 push 上来时，不让当前页面执行默认的左移退出动画
-      if (_isBeingCovered(secondaryAnimation)) {
-        return child ?? const SizedBox.shrink();
-      }
-
-      //其他情况保持默认
-      return CupertinoPageTransition.delegatedTransition(
-            context,
-            animation,
-            secondaryAnimation,
-            allowSnapshotting,
-            child,
-          ) ??
-          (child ?? const SizedBox.shrink());
-    };
-  }
-
-  @override
-  Widget buildTransitions(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
-    //push 时：当前页直接显示，不做进入动画
-    if (_isPush(animation)) {
-      return child;
+  void dispose() {
+    final Animation<double>? routeAnimation = animation;
+    if (_didAttachAnimationListener && routeAnimation != null) {
+      routeAnimation.removeStatusListener(_handleAnimationStatusChanged);
     }
-    //pop 时：保留 Cupertino 默认动画（含侧滑返回）
-    return super.buildTransitions(
-      context,
-      animation,
-      secondaryAnimation,
-      child,
-    );
+    super.dispose();
   }
 
+  /// Push transition duration.
+  /// push 动画时长。
   @override
   Duration get transitionDuration => duration;
 
+  /// Pop transition duration.
+  /// pop 动画时长。
   @override
   Duration get reverseTransitionDuration => duration;
 }
