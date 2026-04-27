@@ -9,11 +9,11 @@ import 'package:flutter/material.dart';
 /// [RectTween] that transitions between them.
 ///
 /// This is typically used with a [DialogActionHeroController] to provide an animation for
-/// [DialogActionBaseHero] positions that looks nicer than a linear movement. For example, see
+/// [CustomCurveHero] positions that looks nicer than a linear movement. For example, see
 /// [MaterialRectArcTween].
 typedef CreateRectTween = Tween<Rect?> Function(Rect? begin, Rect? end);
 
-/// Signature for a function that builds a [DialogActionBaseHero] placeholder widget given a
+/// Signature for a function that builds a [CustomCurveHero] placeholder widget given a
 /// child and a [Size].
 ///
 /// The child can optionally be part of the returned widget tree. The returned
@@ -27,9 +27,9 @@ typedef CreateRectTween = Tween<Rect?> Function(Rect? begin, Rect? end);
 typedef HeroPlaceholderBuilder = Widget Function(
     BuildContext context, Size heroSize, Widget child);
 
-/// A function that lets [DialogActionBaseHero]es self supply a [Widget] that is shown during the
+/// A function that lets [CustomCurveHero]es self supply a [Widget] that is shown during the
 /// hero's flight from one route to another instead of default (which is to
-/// show the destination route's instance of the DialogActionBaseHero).
+/// show the destination route's instance of the CustomCurveHero).
 typedef HeroFlightShuttleBuilder = Widget Function(
   BuildContext flightContext,
   Animation<double> animation,
@@ -47,7 +47,7 @@ enum DialogActionHeroFlightDirection {
   /// The animation goes from 0 to 1.
   ///
   /// If no custom [HeroFlightShuttleBuilder] is supplied, the top route's
-  /// [DialogActionBaseHero] child is shown in flight.
+  /// [CustomCurveHero] child is shown in flight.
   push,
 
   /// A flight triggered by a route pop.
@@ -55,7 +55,7 @@ enum DialogActionHeroFlightDirection {
   /// The animation goes from 1 to 0.
   ///
   /// If no custom [HeroFlightShuttleBuilder] is supplied, the bottom route's
-  /// [DialogActionBaseHero] child is shown in flight.
+  /// [CustomCurveHero] child is shown in flight.
   pop,
 }
 
@@ -71,40 +71,40 @@ enum DialogActionHeroFlightDirection {
 /// overlay during the transition and while they're in-flight they're, by
 /// default, not shown in their original locations in the old and new routes.
 ///
-/// To label a widget as such a feature, wrap it in a [DialogActionBaseHero] widget. When
-/// navigation happens, the [DialogActionBaseHero] widgets on each route are identified
-/// by the [DialogActionHeroController]. For each pair of [DialogActionBaseHero] widgets that have the
+/// To label a widget as such a feature, wrap it in a [CustomCurveHero] widget. When
+/// navigation happens, the [CustomCurveHero] widgets on each route are identified
+/// by the [DialogActionHeroController]. For each pair of [CustomCurveHero] widgets that have the
 /// same tag, a hero animation is triggered.
 ///
-/// If a [DialogActionBaseHero] is already in flight when navigation occurs, its
+/// If a [CustomCurveHero] is already in flight when navigation occurs, its
 /// flight animation will be redirected to its new destination. The
 /// widget shown in-flight during the transition is, by default, the
-/// destination route's [DialogActionBaseHero]'s child.
+/// destination route's [CustomCurveHero]'s child.
 ///
-/// For a DialogActionBaseHero animation to trigger, the DialogActionBaseHero has to exist on the very first
+/// For a CustomCurveHero animation to trigger, the CustomCurveHero has to exist on the very first
 /// frame of the new page's animation.
 ///
-/// Routes must not contain more than one [DialogActionBaseHero] for each [tag].
+/// Routes must not contain more than one [CustomCurveHero] for each [tag].
 ///
 /// {@youtube 560 315 https://www.youtube.com/watch?v=Be9UH1kXFDw}
 ///
 /// {@tool dartpad}
-/// This sample shows a [DialogActionBaseHero] used within a [ListTile].
+/// This sample shows a [CustomCurveHero] used within a [ListTile].
 ///
-/// Tapping on the DialogActionBaseHero-wrapped rectangle triggers a hero
+/// Tapping on the CustomCurveHero-wrapped rectangle triggers a hero
 /// animation as a new [MaterialPageRoute] is pushed. Both the size
 /// and location of the rectangle animates.
 ///
-/// Both widgets use the same [DialogActionBaseHero.tag].
+/// Both widgets use the same [CustomCurveHero.tag].
 ///
-/// The DialogActionBaseHero widget uses the matching tags to identify and execute this
+/// The CustomCurveHero widget uses the matching tags to identify and execute this
 /// animation.
 ///
 /// ** See code in examples/api/lib/widgets/heroes/hero.0.dart **
 /// {@end-tool}
 ///
 /// {@tool dartpad}
-/// This sample shows [DialogActionBaseHero] flight animations using default tween
+/// This sample shows [CustomCurveHero] flight animations using default tween
 /// and custom rect tween.
 ///
 /// ** See code in examples/api/lib/widgets/heroes/hero.1.dart **
@@ -114,22 +114,22 @@ enum DialogActionHeroFlightDirection {
 ///
 /// Heroes and the [Navigator]'s [Overlay] [Stack] must be axis-aligned for
 /// all this to work. The top left and bottom right coordinates of each animated
-/// DialogActionBaseHero will be converted to global coordinates and then from there converted
-/// to that [Stack]'s coordinate space, and the entire DialogActionBaseHero subtree will, for
+/// CustomCurveHero will be converted to global coordinates and then from there converted
+/// to that [Stack]'s coordinate space, and the entire CustomCurveHero subtree will, for
 /// the duration of the animation, be lifted out of its original place, and
-/// positioned on that stack. If the [DialogActionBaseHero] isn't axis aligned, this is going to
+/// positioned on that stack. If the [CustomCurveHero] isn't axis aligned, this is going to
 /// fail in a rather ugly fashion. Don't rotate your heroes!
 ///
 /// To make the animations look good, it's critical that the widget tree for the
 /// hero in both locations be essentially identical. The widget of the *target*
 /// is, by default, used to do the transition: when going from route A to route
 /// B, route B's hero's widget is placed over route A's hero's widget. Additionally,
-/// if the [DialogActionBaseHero] subtree changes appearance based on an [InheritedWidget] (such
+/// if the [CustomCurveHero] subtree changes appearance based on an [InheritedWidget] (such
 /// as [MediaQuery] or [Theme]), then the hero animation may have discontinuity
 /// at the start or the end of the animation because route A and route B provides
 /// different such [InheritedWidget]s. Consider providing a custom [flightShuttleBuilder]
 /// to ensure smooth transitions. The default [flightShuttleBuilder] interpolates
-/// [MediaQuery]'s paddings. If your [DialogActionBaseHero] widget uses custom [InheritedWidget]s
+/// [MediaQuery]'s paddings. If your [CustomCurveHero] widget uses custom [InheritedWidget]s
 /// and displays a discontinuity in the animation, try to provide custom in-flight
 /// transition using [flightShuttleBuilder].
 ///
@@ -145,20 +145,20 @@ enum DialogActionHeroFlightDirection {
 ///
 /// ### Nested Navigators
 ///
-/// If either or both routes contain nested [Navigator]s, only [DialogActionBaseHero]es
+/// If either or both routes contain nested [Navigator]s, only [CustomCurveHero]es
 /// contained in the top-most routes (as defined by [Route.isCurrent]) *of those
 /// nested [Navigator]s* are considered for animation. Just like in the
-/// non-nested case the top-most routes containing these [DialogActionBaseHero]es in the nested
+/// non-nested case the top-most routes containing these [CustomCurveHero]es in the nested
 /// [Navigator]s have to be [PageRoute]s.
 ///
-/// ## Parts of a DialogActionBaseHero Transition
+/// ## Parts of a CustomCurveHero Transition
 ///
-/// ![Diagrams with parts of the DialogActionBaseHero transition.](https://flutter.github.io/assets-for-api-docs/assets/interaction/heroes.png)
-class DialogActionBaseHero extends StatefulWidget {
+/// ![Diagrams with parts of the CustomCurveHero transition.](https://flutter.github.io/assets-for-api-docs/assets/interaction/heroes.png)
+class CustomCurveHero extends StatefulWidget {
   /// Create a hero.
   ///
-  /// The [child] parameter and all of the its descendants must not be [DialogActionBaseHero]es.
-  const DialogActionBaseHero({
+  /// The [child] parameter and all of the its descendants must not be [CustomCurveHero]es.
+  const CustomCurveHero({
     super.key,
     required this.tag,
     this.createRectTween,
@@ -201,43 +201,43 @@ class DialogActionBaseHero extends StatefulWidget {
   /// Optional override to supply a widget that's shown during the hero's flight.
   ///
   /// This in-flight widget can depend on the route transition's animation as
-  /// well as the incoming and outgoing routes' [DialogActionBaseHero] descendants' widgets and
+  /// well as the incoming and outgoing routes' [CustomCurveHero] descendants' widgets and
   /// layout.
   ///
-  /// When both the source and destination [DialogActionBaseHero]es provide a [flightShuttleBuilder],
+  /// When both the source and destination [CustomCurveHero]es provide a [flightShuttleBuilder],
   /// the destination's [flightShuttleBuilder] takes precedence.
   ///
-  /// If none is provided, the destination route's DialogActionBaseHero child is shown in-flight
+  /// If none is provided, the destination route's CustomCurveHero child is shown in-flight
   /// by default.
   ///
   /// ## Limitations
   ///
   /// If a widget built by [flightShuttleBuilder] takes part in a [Navigator]
   /// push transition, that widget or its descendants must not have any
-  /// [GlobalKey] that is used in the source DialogActionBaseHero's descendant widgets. That is
-  /// because both subtrees will be included in the widget tree during the DialogActionBaseHero
+  /// [GlobalKey] that is used in the source CustomCurveHero's descendant widgets. That is
+  /// because both subtrees will be included in the widget tree during the CustomCurveHero
   /// flight animation, and [GlobalKey]s must be unique across the entire widget
   /// tree.
   ///
   /// If the said [GlobalKey] is essential to your application, consider providing
-  /// a custom [placeholderBuilder] for the source DialogActionBaseHero, to avoid the [GlobalKey]
+  /// a custom [placeholderBuilder] for the source CustomCurveHero, to avoid the [GlobalKey]
   /// collision, such as a builder that builds an empty [SizedBox], keeping the
-  /// DialogActionBaseHero [child]'s original size.
+  /// CustomCurveHero [child]'s original size.
   final HeroFlightShuttleBuilder? flightShuttleBuilder;
 
-  /// Placeholder widget left in place as the DialogActionBaseHero's [child] once the flight takes
+  /// Placeholder widget left in place as the CustomCurveHero's [child] once the flight takes
   /// off.
   ///
-  /// By default the placeholder widget is an empty [SizedBox] keeping the DialogActionBaseHero
-  /// child's original size, unless this DialogActionBaseHero is a source DialogActionBaseHero of a [Navigator]
+  /// By default the placeholder widget is an empty [SizedBox] keeping the CustomCurveHero
+  /// child's original size, unless this CustomCurveHero is a source CustomCurveHero of a [Navigator]
   /// push transition, in which case [child] will be a descendant of the placeholder
-  /// and will be kept [Offstage] during the DialogActionBaseHero's flight.
+  /// and will be kept [Offstage] during the CustomCurveHero's flight.
   final HeroPlaceholderBuilder? placeholderBuilder;
 
   /// Whether to perform the hero transition if the [PageRoute] transition was
   /// triggered by a user gesture, such as a back swipe on iOS.
   ///
-  /// If [DialogActionBaseHero]es with the same [tag] on both the from and the to routes have
+  /// If [CustomCurveHero]es with the same [tag] on both the from and the to routes have
   /// [transitionOnUserGestures] set to true, a back swipe gesture will
   /// trigger the same hero animation as a programmatically triggered push or
   /// pop.
@@ -273,7 +273,7 @@ class DialogActionBaseHero extends StatefulWidget {
             ),
             ErrorDescription(
               'Within each subtree for which heroes are to be animated (i.e. a PageRoute subtree), '
-              'each DialogActionBaseHero must have a unique non-null tag.\n'
+              'each CustomCurveHero must have a unique non-null tag.\n'
               'In this case, multiple heroes had the following tag: $tag',
             ),
             DiagnosticsProperty<StatefulElement>(
@@ -286,8 +286,7 @@ class DialogActionBaseHero extends StatefulWidget {
         }
         return true;
       }());
-      final DialogActionBaseHero heroWidget =
-          hero.widget as DialogActionBaseHero;
+      final CustomCurveHero heroWidget = hero.widget as CustomCurveHero;
       final _HeroState heroState = hero.state as _HeroState;
       if (!isUserGestureTransition || heroWidget.transitionOnUserGestures) {
         result[tag] = heroState;
@@ -300,15 +299,15 @@ class DialogActionBaseHero extends StatefulWidget {
 
     void visitor(Element element) {
       final Widget widget = element.widget;
-      if (widget is DialogActionBaseHero) {
+      if (widget is CustomCurveHero) {
         final StatefulElement hero = element as StatefulElement;
         final Object tag = widget.tag;
         if (Navigator.of(hero) == navigator) {
           inviteHero(hero, tag);
         } else {
-          // The nearest navigator to the DialogActionBaseHero is not the Navigator that is
+          // The nearest navigator to the CustomCurveHero is not the Navigator that is
           // currently transitioning from one route to another. This means
-          // the DialogActionBaseHero is inside a nested Navigator and should only be
+          // the CustomCurveHero is inside a nested Navigator and should only be
           // considered for animation if it is part of the top-most route in
           // that nested Navigator and if that route is also a PageRoute.
           final ModalRoute<Object?>? heroRoute = ModalRoute.of(hero);
@@ -329,7 +328,7 @@ class DialogActionBaseHero extends StatefulWidget {
   }
 
   @override
-  State<DialogActionBaseHero> createState() => _HeroState();
+  State<CustomCurveHero> createState() => _HeroState();
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -338,14 +337,14 @@ class DialogActionBaseHero extends StatefulWidget {
   }
 }
 
-/// The [DialogActionBaseHero] widget displays different content based on whether it is in an
-/// animated transition ("flight"), from/to another [DialogActionBaseHero] with the same tag:
-///   * When [startFlight] is called, the real content of this [DialogActionBaseHero] will be
+/// The [CustomCurveHero] widget displays different content based on whether it is in an
+/// animated transition ("flight"), from/to another [CustomCurveHero] with the same tag:
+///   * When [startFlight] is called, the real content of this [CustomCurveHero] will be
 ///     replaced by a "placeholder" widget.
 ///   * When the flight ends, the "toHero"'s [endFlight] method must be called
-///     by the hero controller, so the real content of that [DialogActionBaseHero] becomes
+///     by the hero controller, so the real content of that [CustomCurveHero] becomes
 ///     visible again when the animation completes.
-class _HeroState extends State<DialogActionBaseHero> {
+class _HeroState extends State<CustomCurveHero> {
   final GlobalKey _key = GlobalKey();
   Size? _placeholderSize;
 
@@ -376,10 +375,10 @@ class _HeroState extends State<DialogActionBaseHero> {
   }
 
   // When `keepPlaceholder` is true, the placeholder will continue to be shown
-  // after the flight ends. Otherwise the child of the DialogActionBaseHero will become visible
+  // after the flight ends. Otherwise the child of the CustomCurveHero will become visible
   // and its TickerMode will be re-enabled.
   //
-  // This method can be safely called even when this [DialogActionBaseHero] is currently not in
+  // This method can be safely called even when this [CustomCurveHero] is currently not in
   // a flight.
   void endFlight({bool keepPlaceholder = false}) {
     if (keepPlaceholder || _placeholderSize == null) {
@@ -397,8 +396,8 @@ class _HeroState extends State<DialogActionBaseHero> {
   @override
   Widget build(BuildContext context) {
     assert(
-      context.findAncestorWidgetOfExactType<DialogActionBaseHero>() == null,
-      'A DialogActionBaseHero widget cannot be the descendant of another DialogActionBaseHero widget.',
+      context.findAncestorWidgetOfExactType<CustomCurveHero>() == null,
+      'A CustomCurveHero widget cannot be the descendant of another CustomCurveHero widget.',
     );
 
     final bool showPlaceholder = _placeholderSize != null;
@@ -852,7 +851,7 @@ class _HeroFlight {
   }
 }
 
-/// A [Navigator] observer that manages [DialogActionBaseHero] transitions.
+/// A [Navigator] observer that manages [CustomCurveHero] transitions.
 ///
 /// An instance of [DialogActionHeroController] should be used in [Navigator.observers].
 /// This is done automatically by [MaterialApp].
@@ -1033,7 +1032,7 @@ class DialogActionHeroController extends NavigatorObserver {
     final OverlayState? overlay = navigator?.overlay;
     // If the navigator or the overlay was removed before this end-of-frame
     // callback was called, then don't actually start a transition, and we don't
-    // have to worry about any DialogActionBaseHero widget we might have hidden in a previous
+    // have to worry about any CustomCurveHero widget we might have hidden in a previous
     // flight, or ongoing flights.
     if (navigator == null || overlay == null) {
       return;
@@ -1057,7 +1056,7 @@ class DialogActionHeroController extends NavigatorObserver {
     // If `toSubtreeContext` is null abort existingFlights.
     final BuildContext? fromSubtreeContext = from.subtreeContext;
     final Map<Object, _HeroState> fromHeroes = fromSubtreeContext != null
-        ? DialogActionBaseHero._allHeroesFor(
+        ? CustomCurveHero._allHeroesFor(
             fromSubtreeContext,
             isUserGestureTransition,
             navigator,
@@ -1065,7 +1064,7 @@ class DialogActionHeroController extends NavigatorObserver {
         : const <Object, _HeroState>{};
     final BuildContext? toSubtreeContext = to.subtreeContext;
     final Map<Object, _HeroState> toHeroes = toSubtreeContext != null
-        ? DialogActionBaseHero._allHeroesFor(
+        ? CustomCurveHero._allHeroesFor(
             toSubtreeContext,
             isUserGestureTransition,
             navigator,
@@ -1133,8 +1132,7 @@ class DialogActionHeroController extends NavigatorObserver {
     BuildContext fromHeroContext,
     BuildContext toHeroContext,
   ) {
-    final DialogActionBaseHero toHero =
-        toHeroContext.widget as DialogActionBaseHero;
+    final CustomCurveHero toHero = toHeroContext.widget as CustomCurveHero;
 
     final MediaQueryData? toMediaQueryData = MediaQuery.maybeOf(toHeroContext);
     final MediaQueryData? fromMediaQueryData = MediaQuery.maybeOf(
@@ -1179,17 +1177,17 @@ class DialogActionHeroController extends NavigatorObserver {
   }
 }
 
-/// Enables or disables [DialogActionBaseHero]es in the widget subtree.
+/// Enables or disables [CustomCurveHero]es in the widget subtree.
 ///
 /// {@youtube 560 315 https://www.youtube.com/watch?v=AaIASk2u1C0}
 ///
-/// When [enabled] is false, all [DialogActionBaseHero] widgets in this subtree will not be
+/// When [enabled] is false, all [CustomCurveHero] widgets in this subtree will not be
 /// involved in hero animations.
 ///
-/// When [enabled] is true (the default), [DialogActionBaseHero] widgets may be involved in
+/// When [enabled] is true (the default), [CustomCurveHero] widgets may be involved in
 /// hero animations, as usual.
 class DialogActionHeroMode extends StatelessWidget {
-  /// Creates a widget that enables or disables [DialogActionBaseHero]es.
+  /// Creates a widget that enables or disables [CustomCurveHero]es.
   const DialogActionHeroMode({
     super.key,
     required this.child,
@@ -1199,9 +1197,9 @@ class DialogActionHeroMode extends StatelessWidget {
   /// The subtree to place inside the [DialogActionHeroMode].
   final Widget child;
 
-  /// Whether or not [DialogActionBaseHero]es are enabled in this subtree.
+  /// Whether or not [CustomCurveHero]es are enabled in this subtree.
   ///
-  /// If this property is false, the [DialogActionBaseHero]es in this subtree will not animate
+  /// If this property is false, the [CustomCurveHero]es in this subtree will not animate
   /// on route changes. Otherwise, they will animate as usual.
   ///
   /// Defaults to true.

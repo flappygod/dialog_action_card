@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dialog_action_base_hero.dart';
+import 'custom_curve_hero.dart';
 import 'dialog_action_base.dart';
 
 /// Hero information manager.
@@ -540,7 +540,7 @@ class _DialogActionHeroState extends State<DialogActionHero> {
       key: _globalKey,
       child: (tag == null || tag.isEmpty)
           ? heroChild
-          : DialogActionBaseHero(
+          : CustomCurveHero(
               tag: tag,
               curve: widget.curve,
               createRectTween: (Rect? begin, Rect? end) {
@@ -562,10 +562,8 @@ Widget dragActionHeroFlightShuttleBuilder(
   BuildContext fromHeroContext,
   BuildContext toHeroContext,
 ) {
-  final DialogActionBaseHero toHero =
-      toHeroContext.widget as DialogActionBaseHero;
-  final DialogActionBaseHero fromHero =
-      fromHeroContext.widget as DialogActionBaseHero;
+  final CustomCurveHero toHero = toHeroContext.widget as CustomCurveHero;
+  final CustomCurveHero fromHero = fromHeroContext.widget as CustomCurveHero;
   final MediaQueryData? toMediaQueryData = MediaQuery.maybeOf(toHeroContext);
   final MediaQueryData? fromMediaQueryData = MediaQuery.maybeOf(
     fromHeroContext,
