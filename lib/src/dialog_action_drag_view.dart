@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dialog_action_base.dart';
 import 'dialog_action_hero.dart';
+import 'dialog_action_base.dart';
 
 ///当前控件的布局方式
 enum DialogActionAlign { left, right }

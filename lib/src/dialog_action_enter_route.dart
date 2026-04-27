@@ -1,6 +1,6 @@
-import 'dialog_action_base.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dialog_action_base.dart';
 
 /// Dialog action enter route
 /// 不需要侧滑返回，进入/退出动画都使用hero动画，这里无需动画
