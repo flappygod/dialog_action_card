@@ -409,6 +409,22 @@ class _DialogActionHeroState extends State<DialogActionHero> {
   /// 该值通过 [ModalRoute.of(context)] 解析得到。
   int? _routeId;
 
+  /// Debug-only check: ensure users have registered [DialogActionHeroController].
+  bool _debugAssertHeroControllerRegistered() {
+    final NavigatorState? navigator = Navigator.maybeOf(context);
+    final bool hasController = navigator?.widget.observers.any(
+          (NavigatorObserver observer) =>
+              observer is DialogActionHeroController,
+        ) ??
+        false;
+    assert(
+      hasController,
+      'DialogActionHero requires DialogActionHeroController in Navigator.observers.\n'
+      'Please register DialogActionHeroController() in your MaterialApp/CupertinoApp router configuration.',
+    );
+    return true;
+  }
+
   /// Resolves current route id from [BuildContext].
   /// 从 [BuildContext] 中解析当前 route 的 id。
   ///
@@ -468,6 +484,7 @@ class _DialogActionHeroState extends State<DialogActionHero> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    assert(_debugAssertHeroControllerRegistered());
 
     /// Route is usually available here, so registration is handled here.
     /// route 通常在这个阶段可用，因此在这里处理注册逻辑。
