@@ -1241,15 +1241,19 @@ class DialogActionHeroMode extends StatelessWidget {
 }
 
 /// Syntax sugar for enabling [CustomCurveHeroController] on navigator observers.
-extension CustomCurveHeroNavigatorObserversX on List<NavigatorObserver> {
+extension CustomCurveHeroNavigatorObserversX<T extends NavigatorObserver>
+    on List<T> {
   /// Returns a new observer list with [CustomCurveHeroController] inserted at
   /// index 0, and removes duplicated existing ones.
   List<NavigatorObserver> enableCustomCurveHero({
     CreateRectTween? createRectTween,
   }) {
-    final List<NavigatorObserver> result = where(
-      (NavigatorObserver observer) => observer is! CustomCurveHeroController,
-    ).toList();
+    final List<NavigatorObserver> result = cast<NavigatorObserver>()
+        .where(
+          (NavigatorObserver observer) =>
+              observer is! CustomCurveHeroController,
+        )
+        .toList();
     result.insert(
       0,
       CustomCurveHeroController(createRectTween: createRectTween),
