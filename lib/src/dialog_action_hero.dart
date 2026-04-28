@@ -413,8 +413,7 @@ class _DialogActionHeroState extends State<DialogActionHero> {
   bool _debugAssertHeroControllerRegistered() {
     final NavigatorState? navigator = Navigator.maybeOf(context);
     final bool hasController = navigator?.widget.observers.any(
-          (NavigatorObserver observer) =>
-              observer is CustomCurveHeroController,
+          (NavigatorObserver observer) => observer is CustomCurveHeroController,
         ) ??
         false;
     assert(
