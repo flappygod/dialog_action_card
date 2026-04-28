@@ -409,18 +409,18 @@ class _DialogActionHeroState extends State<DialogActionHero> {
   /// 该值通过 [ModalRoute.of(context)] 解析得到。
   int? _routeId;
 
-  /// Debug-only check: ensure users have registered [DialogActionHeroController].
+  /// Debug-only check: ensure users have registered [CustomCurveHeroController].
   bool _debugAssertHeroControllerRegistered() {
     final NavigatorState? navigator = Navigator.maybeOf(context);
     final bool hasController = navigator?.widget.observers.any(
           (NavigatorObserver observer) =>
-              observer is DialogActionHeroController,
+              observer is CustomCurveHeroController,
         ) ??
         false;
     assert(
       hasController,
-      'DialogActionHero requires DialogActionHeroController in Navigator.observers.\n'
-      'Please register DialogActionHeroController() in your MaterialApp/CupertinoApp router configuration.',
+      'DialogActionHero requires CustomCurveHeroController in Navigator.observers.\n'
+      'Please register CustomCurveHeroController() in your MaterialApp/CupertinoApp router configuration.',
     );
     return true;
   }

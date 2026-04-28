@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 /// Signature for a function that takes two [Rect] instances and returns a
 /// [RectTween] that transitions between them.
 ///
-/// This is typically used with a [DialogActionHeroController] to provide an animation for
+/// This is typically used with a [CustomCurveHeroController] to provide an animation for
 /// [CustomCurveHero] positions that looks nicer than a linear movement. For example, see
 /// [MaterialRectArcTween].
 typedef CreateRectTween = Tween<Rect?> Function(Rect? begin, Rect? end);
@@ -73,7 +73,7 @@ enum DialogActionHeroFlightDirection {
 ///
 /// To label a widget as such a feature, wrap it in a [CustomCurveHero] widget. When
 /// navigation happens, the [CustomCurveHero] widgets on each route are identified
-/// by the [DialogActionHeroController]. For each pair of [CustomCurveHero] widgets that have the
+/// by the [CustomCurveHeroController]. For each pair of [CustomCurveHero] widgets that have the
 /// same tag, a hero animation is triggered.
 ///
 /// If a [CustomCurveHero] is already in flight when navigation occurs, its
@@ -183,7 +183,7 @@ class CustomCurveHero extends StatefulWidget {
   /// to 1.0.
   ///
   /// If this property is null, the default, then the value of
-  /// [DialogActionHeroController.createRectTween] is used. The [DialogActionHeroController] created by
+  /// [CustomCurveHeroController.createRectTween] is used. The [CustomCurveHeroController] created by
   /// [MaterialApp] creates a [MaterialRectArcTween].
   final CreateRectTween? createRectTween;
 
@@ -853,16 +853,16 @@ class _HeroFlight {
 
 /// A [Navigator] observer that manages [CustomCurveHero] transitions.
 ///
-/// An instance of [DialogActionHeroController] should be used in [Navigator.observers].
+/// An instance of [CustomCurveHeroController] should be used in [Navigator.observers].
 /// This is done automatically by [MaterialApp].
-class DialogActionHeroController extends NavigatorObserver {
+class CustomCurveHeroController extends NavigatorObserver {
   /// Creates a hero controller with the given [RectTween] constructor if any.
   ///
   /// The [createRectTween] argument is optional. If null, the controller uses a
   /// linear [Tween<Rect>].
-  DialogActionHeroController({this.createRectTween}) {
+  CustomCurveHeroController({this.createRectTween}) {
     assert(
-      debugMaybeDispatchCreated('widgets', 'DialogActionHeroController', this),
+      debugMaybeDispatchCreated('widgets', 'CustomCurveHeroController', this),
     );
   }
 
@@ -1012,7 +1012,7 @@ class DialogActionHeroController extends NavigatorObserver {
           flightType,
           isUserGestureTransition,
         );
-      }, debugLabel: 'DialogActionHeroController.startTransition');
+      }, debugLabel: 'CustomCurveHeroController.startTransition');
     }
   }
 
