@@ -546,7 +546,6 @@ class _DialogActionHeroState extends State<DialogActionHero> {
               createRectTween: (Rect? begin, Rect? end) {
                 return DragActionRectArcTween(begin: begin, end: end);
               },
-              flightShuttleBuilder: dragActionHeroFlightShuttleBuilder,
               child: heroChild,
             ),
     );
@@ -554,67 +553,8 @@ class _DialogActionHeroState extends State<DialogActionHero> {
   }
 }
 
-///custom
-Widget dragActionHeroFlightShuttleBuilder(
-  BuildContext flightContext,
-  Animation<double> animation,
-  DialogActionHeroFlightDirection flightDirection,
-  BuildContext fromHeroContext,
-  BuildContext toHeroContext,
-) {
-  final CustomCurveHero toHero = toHeroContext.widget as CustomCurveHero;
-  final CustomCurveHero fromHero = fromHeroContext.widget as CustomCurveHero;
-  final MediaQueryData? toMediaQueryData = MediaQuery.maybeOf(toHeroContext);
-  final MediaQueryData? fromMediaQueryData = MediaQuery.maybeOf(
-    fromHeroContext,
-  );
-  if (toMediaQueryData == null || fromMediaQueryData == null) {
-    return toHero.child;
-  }
-  final EdgeInsets fromHeroPadding = fromMediaQueryData.padding;
-  final EdgeInsets toHeroPadding = toMediaQueryData.padding;
-  final EdgeInsetsTween paddingTween =
-      (flightDirection == DialogActionHeroFlightDirection.push)
-          ? EdgeInsetsTween(begin: fromHeroPadding, end: toHeroPadding)
-          : EdgeInsetsTween(begin: toHeroPadding, end: fromHeroPadding);
-  return AnimatedBuilder(
-    animation: animation,
-    builder: (BuildContext context, Widget? child) {
-      final double t = animation.value.clamp(0.0, 1.0);
-      final EdgeInsets currentPadding = paddingTween.lerp(t);
-      final double fromOpacity;
-      final double toOpacity;
-      switch (flightDirection) {
-        case DialogActionHeroFlightDirection.push:
-          fromOpacity = (1.0 - t).clamp(0.0, 1.0);
-          toOpacity = t;
-          break;
-        case DialogActionHeroFlightDirection.pop:
-          fromOpacity = t;
-          toOpacity = (1.0 - t).clamp(0.0, 1.0);
-          break;
-      }
-      return Material(
-        color: Colors.transparent,
-        child: MediaQuery(
-          data: toMediaQueryData.copyWith(padding: currentPadding),
-          child: IgnorePointer(
-            child: Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.center,
-              children: [
-                Opacity(opacity: fromOpacity, child: fromHero.child),
-                Opacity(opacity: toOpacity, child: toHero.child),
-              ],
-            ),
-          ),
-        ),
-      );
-    },
-  );
-}
-
-///这里是我们自定义的rect动画曲线
+///这里是我们自定义的rect动画曲线,这里暂时不做处理，因为这里的处理是在值上的
+///效果不是很好
 class DragActionRectArcTween extends RectTween {
   ///curve
   final Curve curve;

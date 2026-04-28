@@ -1133,35 +1133,52 @@ class DialogActionHeroController extends NavigatorObserver {
     BuildContext toHeroContext,
   ) {
     final CustomCurveHero toHero = toHeroContext.widget as CustomCurveHero;
-
+    final CustomCurveHero fromHero = fromHeroContext.widget as CustomCurveHero;
     final MediaQueryData? toMediaQueryData = MediaQuery.maybeOf(toHeroContext);
     final MediaQueryData? fromMediaQueryData = MediaQuery.maybeOf(
       fromHeroContext,
     );
-
     if (toMediaQueryData == null || fromMediaQueryData == null) {
       return toHero.child;
     }
-
     final EdgeInsets fromHeroPadding = fromMediaQueryData.padding;
     final EdgeInsets toHeroPadding = toMediaQueryData.padding;
-
+    final EdgeInsetsTween paddingTween =
+        (flightDirection == DialogActionHeroFlightDirection.push)
+            ? EdgeInsetsTween(begin: fromHeroPadding, end: toHeroPadding)
+            : EdgeInsetsTween(begin: toHeroPadding, end: fromHeroPadding);
     return AnimatedBuilder(
       animation: animation,
       builder: (BuildContext context, Widget? child) {
-        return MediaQuery(
-          data: toMediaQueryData.copyWith(
-            padding: (flightDirection == DialogActionHeroFlightDirection.push)
-                ? EdgeInsetsTween(
-                    begin: fromHeroPadding,
-                    end: toHeroPadding,
-                  ).evaluate(animation)
-                : EdgeInsetsTween(
-                    begin: toHeroPadding,
-                    end: fromHeroPadding,
-                  ).evaluate(animation),
+        final double t = animation.value.clamp(0.0, 1.0);
+        final EdgeInsets currentPadding = paddingTween.lerp(t);
+        final double fromOpacity;
+        final double toOpacity;
+        switch (flightDirection) {
+          case DialogActionHeroFlightDirection.push:
+            fromOpacity = (1.0 - t).clamp(0.0, 1.0);
+            toOpacity = t;
+            break;
+          case DialogActionHeroFlightDirection.pop:
+            fromOpacity = t;
+            toOpacity = (1.0 - t).clamp(0.0, 1.0);
+            break;
+        }
+        return Material(
+          color: Colors.transparent,
+          child: MediaQuery(
+            data: toMediaQueryData.copyWith(padding: currentPadding),
+            child: IgnorePointer(
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  Opacity(opacity: fromOpacity, child: fromHero.child),
+                  Opacity(opacity: toOpacity, child: toHero.child),
+                ],
+              ),
+            ),
           ),
-          child: toHero.child,
         );
       },
     );
