@@ -1248,12 +1248,12 @@ extension CustomCurveHeroNavigatorObserversX<T extends NavigatorObserver>
   List<NavigatorObserver> enableCustomCurveHero({
     CreateRectTween? createRectTween,
   }) {
-    final List<NavigatorObserver> result = cast<NavigatorObserver>()
-        .where(
-          (NavigatorObserver observer) =>
-              observer is! CustomCurveHeroController,
-        )
-        .toList();
+    final result = <NavigatorObserver>[];
+    for (final observer in this) {
+      if (observer is! CustomCurveHeroController) {
+        result.add(observer);
+      }
+    }
     result.insert(
       0,
       CustomCurveHeroController(createRectTween: createRectTween),
