@@ -1,3 +1,3 @@
-## 1.0.0
+## 1.0.1
 
-* TODO: Describe initial release.
+* 手势在cardChild中时限制侧向的滑动事件.

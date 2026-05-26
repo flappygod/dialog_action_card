@@ -3,7 +3,10 @@ import 'dialog_action_hero.dart';
 import 'dialog_action_base.dart';
 
 ///当前控件的布局方式
-enum DialogActionAlign { left, right }
+enum DialogActionAlign {
+  left,
+  right,
+}
 
 ///可供拖动的card view 【该View主要负责拖动动画】
 class DialogActionDragView extends StatefulWidget {
@@ -118,6 +121,12 @@ class _DialogActionDragViewState extends State<DialogActionDragView>
 
   /// 当前是否有手指按下
   bool _isPointerDown = false;
+
+  /// 当前按下是否发生在 card 区域内
+  bool _isPointerDownInCard = false;
+
+  /// 当前这次手势是否允许 card 横向侧滑
+  bool _enableCardHorizontalDrag = false;
 
   ///收缩阈值
   static const double _kSnapShrinkDistanceThreshold = 30.0;
@@ -276,9 +285,31 @@ class _DialogActionDragViewState extends State<DialogActionDragView>
     );
   }
 
+  ///判断当前的手势是否是落在card中
+  bool _isGlobalPositionInCard(Offset globalPosition) {
+    final BuildContext? cardContext = _cardKey.currentContext;
+    if (cardContext == null) {
+      return false;
+    }
+    final RenderBox? renderBox = cardContext.findRenderObject() as RenderBox?;
+    if (renderBox == null || !renderBox.hasSize) {
+      return false;
+    }
+    final Offset local = renderBox.globalToLocal(globalPosition);
+    return local.dx >= 0 &&
+        local.dy >= 0 &&
+        local.dx <= renderBox.size.width &&
+        local.dy <= renderBox.size.height;
+  }
+
   /// 原始指针移动时处理横向偏移
   void _handlePointerMove(PointerMoveEvent event) {
     if (!_isPointerDown) {
+      return;
+    }
+
+    /// 只有非 card 区域触发的手势，才允许横向侧滑
+    if (!_enableCardHorizontalDrag) {
       return;
     }
 
@@ -375,8 +406,13 @@ class _DialogActionDragViewState extends State<DialogActionDragView>
   Widget _buildPage() {
     return Listener(
       behavior: HitTestBehavior.translucent,
-      onPointerDown: (_) {
+      onPointerDown: (event) {
         _isPointerDown = true;
+        _isPointerDownInCard = _isGlobalPositionInCard(event.position);
+
+        /// 如果按下发生在 card 内部，则禁用本次横向侧滑
+        _enableCardHorizontalDrag = !_isPointerDownInCard;
+
         if (_cardHorizontalReboundController.isAnimating) {
           _cardHorizontalReboundController.stop();
         }
@@ -384,10 +420,14 @@ class _DialogActionDragViewState extends State<DialogActionDragView>
       onPointerMove: _handlePointerMove,
       onPointerUp: (_) {
         _isPointerDown = false;
+        _isPointerDownInCard = false;
+        _enableCardHorizontalDrag = false;
         _startCardHorizontalRebound();
       },
       onPointerCancel: (_) {
         _isPointerDown = false;
+        _isPointerDownInCard = false;
+        _enableCardHorizontalDrag = false;
         _startCardHorizontalRebound();
       },
       child: NotificationListener<ScrollNotification>(
