@@ -1,3 +1,3 @@
-## 1.0.1
+## 1.0.2
 
-* 手势在cardChild中时限制侧向的滑动事件.
+* Add route settings for .

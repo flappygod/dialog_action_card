@@ -1,20 +1,26 @@
-import 'dialog_action_enter_route.dart';
-import 'package:flutter/material.dart';
-import 'dialog_action_drag_view.dart';
-import 'dialog_action_base.dart';
 import 'dart:ui';
+
+import 'package:flutter/material.dart';
+
+import 'dialog_action_base.dart';
+import 'dialog_action_drag_view.dart';
+import 'dialog_action_enter_route.dart';
 
 ///展示dialog action
 Future showDialogAction({
   required BuildContext context,
   required WidgetBuilder builder,
   Duration? duration,
+  RouteSettings? settings,
 }) {
-  return Navigator.of(context).push(DialogActionEnterRoute(
-    translucentColor: Colors.transparent,
-    duration: duration ?? iosDefaultDuration,
-    builder: builder,
-  ));
+  return Navigator.of(context).push(
+    DialogActionEnterRoute(
+      translucentColor: Colors.transparent,
+      duration: duration ?? iosDefaultDuration,
+      builder: builder,
+      settings: settings,
+    ),
+  );
 }
 
 ///磨砂玻璃覆盖层view
